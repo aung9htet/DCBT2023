@@ -79,7 +79,7 @@ from geometry_msgs.msg import TwistStamped
 
 class Node:
 
-    def __init__(self, reward=None):
+    def __init__(self, reward=0):
         """
             The following object is created to store current node's data
 
@@ -103,9 +103,9 @@ class Map_Representation():
                     [position x on matrix, position y on matrix, yaw]
                     yaw: 0 for up, 1 for right, 2 for down, 3 for left
         """
-        self.matrix = [[Node, Node, Node],
-                       [Node, Node, Node],
-                       [Node, Node, Node]]
+        self.matrix = [[Node(), Node(), Node()],
+                       [Node(), Node(), Node()],
+                       [Node(), Node(), Node()]]
         self.agent_pos = [1,1,0]
         # self.agent_matrix = lambda x: np.add(x, [1,1]).tolist()
 
@@ -118,9 +118,9 @@ class Map_Representation():
         """
         for row in self.matrix:
             if direction == "left":
-                row = row.insert(0, Node)
+                row = row.insert(0, Node())
             elif direction == "right":
-                row = row.append(Node)
+                row = row.append(Node())
             
     def add_row(self, direction):
         """
@@ -130,13 +130,13 @@ class Map_Representation():
             :param direction: `top` for adding row to top and `bottom` for adding row to bottom
         """
         # create new row with same dimension as the other rows
-        new_row = []
-        for i in range(len(self.matrix[0])):
-            new_row = new_row.append(Node)
+        new_row = [Node()]
+        for item_loop in range(len(self.matrix[0])-1):
+            new_row.append(Node())
         if direction == "top":
-            self.matrix = self.matrix.insert(0, new_row)
+            self.matrix.insert(0, new_row)
         elif direction =="bottom":
-            self.matrix = self.matrix.append(new_row)
+            self.matrix.append(new_row)
     
     def change_position(self):
         """
@@ -191,12 +191,21 @@ class Map_Representation():
         elif action == 'straight':
             self.change_position()
     
-    def show_map(self):
+    def show_map(self, value = "reward"):
         """
             show map draws a map representation of what the agent has gathered
+            The information shown will include the map and agent position
         """
+        print("Matrix Representation of Map based on {}", value)
+        matrix_str = ""
         for row in self.matrix:
-            print(row + "\n")
+            if value == "reward":
+                matrix_str += " | "
+                for item in row:
+                    matrix_str += str(item.reward) + " | "
+                matrix_str += "\n"
+        print(matrix_str)
+        print("Agent Position: {}",self.agent_pos)
 
 class State_Representation:
 
@@ -300,6 +309,7 @@ class State_Representation:
         """
         self.action_dict[action_selection]()
         self.map_representation.move(action_selection)
+        self.map_representation.show_map()
     
     def get_camera(self, orientation):
         """
@@ -368,12 +378,22 @@ class Action_State_RL(State_Representation):
         start_x = self.position_dict["x"]
         start_y = self.position_dict["y"]
         rospy.sleep(parameters.SLEEP_TIMER)
-        while (np.abs(self.position_dict["x"] - start_x) < parameters.STRAIGHT_DISTANCE) or (np.abs(self.position_dict["y"] - start_y) < parameters.STRAIGHT_DISTANCE):
+        while (np.abs(self.position_dict["x"] - start_x) < parameters.STRAIGHT_DISTANCE) and (np.abs(self.position_dict["y"] - start_y) < parameters.STRAIGHT_DISTANCE):
             print("x: " + str(self.position_dict["x"]) + " ,y: " + str(self.position_dict["y"]))
+            print((np.abs(self.position_dict["x"] - start_x) < parameters.STRAIGHT_DISTANCE) or (np.abs(self.position_dict["y"] - start_y) < parameters.STRAIGHT_DISTANCE))
             self.vel_pub.publish(vel_cmd)
             self.rate.sleep()
 
 
 # makes the miro move in circles
 testing = Action_State_RL("action_pub")
-testing.movement('right')
+testing.map_representation.show_map()
+print(testing.map_representation.agent_pos)
+testing.movement('left')
+testing.movement('left')
+testing.movement('straight')
+testing.movement('straight')
+testing.movement('straight')
+# while not rospy.is_shutdown():
+    # testing.get_camera("right")
+    # print(np.array(testing.camera_data["left"]).shape)
