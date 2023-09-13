@@ -40,6 +40,8 @@ def MF_MB_spatial_navigation() -> None:
         MB_params['epsilon'] = 0.1  # -------------------- Epsilon of the epsilon-greedy
     elif MB_params['decision_rule'] == 'softmax':
         MB_params['beta'] = 100  # ----------------------- Beta for softmax
+    MB_params['state_num'] = None  # --------------------- The size of the state space
+    MB_params['curr_state'] = np.array([0, 0])  # -------- The current location of the agent # TODO make it flexible
     MB_params['replay_type'] = 'priority'  # ------------- Replay ('priority', 'trsam', 'bidir', 'backwards', 'forward')
     MB_params['su_event'] = False  # --------------------- What constitutes an event (state-action: True; state: False)
     MB_params['replay_thresh'] = 0.01  # ----------------- Smallest surprise necessary to initiate replay
