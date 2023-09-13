@@ -1,6 +1,7 @@
 import numpy as np
 
 from MB_agent import *
+from SEC_agent import *
 
 class metaAgent():
     """
@@ -9,6 +10,7 @@ class metaAgent():
 
     def __init__(self, MF_params: dict, MB_params: dict) -> None:
         # TODO add the model free params
+        self._MF = SECagent(**MF_params)
         self._MB = MBagent(**MB_params)
         self._replay_thresh = MB_params['replay_thresh']
         self._actions = {'forward': int(0), 'left': int(1), 'right': int(2)}
@@ -42,7 +44,8 @@ class metaAgent():
             True if we used the MF agent, False if we used the MB agent
         """
         # 1) MF action selection
-        action_MF, Q_MF = None, None  # TODO the model-free Q value of the chosen step
+        #action_MF, Q_MF = self.MF.action_selection(state)
+        action_MF, Q_MF = self.MF.choose_action(state)
 
         # 2) MB action selection
         action_MB, Q_MB = self._MB.choose_action(self._states[state],
@@ -71,7 +74,10 @@ class metaAgent():
             self.__add_new_state__(new_state)
 
         # 1) Teach the MF agent
-        # TODO MF learning
+        # Update SEC's STM based on previous (state,action) couplet
+        self.MF.update_STM(sa_couplet = [state, self._actions[action]])
+        self.MF.update_sequential_bias()
+        self.MF.update_LTM(reward)
 
         # 2) Teach the MB agents
         delta_C = self._MB.learnQvalues(self._states[state],
@@ -85,3 +91,10 @@ class metaAgent():
 
         # 3) Return
         return replayed
+
+
+    def reset(self) -> None:
+        """
+        Reset the short-term memory of the MF agent
+        """
+        self.MF.reset_memory()
