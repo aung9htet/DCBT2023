@@ -37,6 +37,7 @@ def MF_MB_spatial_navigation() -> None:
     MF_params['exploration_steps']= 150      # THE UNITS ARE NUMBER OF AGENT STEPS! - NatureDQN: 50k STEPS / 50 EPISODES ANIMALAI
     MF_params['epsilon']= 0.1                 # DEFAULT FOR MFEC IN ATARI: 0.1
     MF_params['load_ltm']=  False
+    ####################################################################################################################
 
     ####################################################################################################################
     # Then let's define the MB agent's parameters:
@@ -83,21 +84,20 @@ def MF_MB_spatial_navigation() -> None:
     ####################################################################################################################
     # Running the experiment
     # 1) Get the first state
-    state = env.reset() # Hypothetical intial state given by the environment # TODO need env or obtain 1st observation
+    state = env.reset() # Hypothetical intial state given by the environment # TODO need env or obtain 1st state
 
     for _ in range(steps):
         # 2) Choose an action
+        # TODO ask the environment for possible moves
         action, MF_winner = T_Swift.action_selection(state, poss_moves)
 
         # 3) Commit to action
         # TODO take the step using the robot, light up based on MF_winner
-        #reward = None
-        #new_state = None
-        new_state, reward, done = env.step(action)
+        new_state, reward, done = env.step(action, MF_winner)
 
         # 4) Learn
         replayed = T_Swift.learning(state, action, new_state, reward)
-        # TODO give replayed to agent
+        # TODO give replayed to agent to look left and right
 
         # 5) If the agent reached a reward, send it back to the starting position
         # TODO implement the agent backtracking. Potentially replay while doing so
