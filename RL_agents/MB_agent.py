@@ -558,7 +558,7 @@ class RLagent:
         return
 
     # Methods used to instruct the agent
-    def choose_action(self, s: int, u_poss: np.ndarray, **kwargs) -> int:
+    def choose_action(self, s: int, u_poss: np.ndarray, **kwargs) -> Tuple[int, float]:
         """
         Chooses actions from the available ones from a predefined state and the set of available actions observed from
         env. The action choice will depend on the decision rule. We might use a softmax function, a greedy choice by Q,
@@ -567,7 +567,7 @@ class RLagent:
         :param u_poss: array of possible actions, given by the env
         :param kwargs:
             virtual: is this a virtual step (True) or a real one (False, default)
-        :return: chosen action
+        :return: chosen action and the corresponding Q value
         """
         # Let's see what epistemic values we will have to combine (is this a real decision, or a virtual replay?)
         virtual = kwargs.get('virtual', False)
@@ -605,7 +605,7 @@ class RLagent:
         # 4) If we choose the maximum (either due to greedy or epsilon greedy policies)
         u_poss = u_poss[comb_Q_poss == max(comb_Q_poss)]
         u = np.random.choice(u_poss)
-        return int(u)
+        return int(u), self._Q[s, u]
 
     def learnQvalues(self, s: int, u: int, s_prime: int, r: float, **kwargs) -> float:
         """

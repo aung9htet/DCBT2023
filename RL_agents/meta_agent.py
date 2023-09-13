@@ -11,7 +11,7 @@ class metaAgent():
         # TODO add the model free params
         self._MB = MBagent(**MB_params)
         self._replay_thresh = MB_params['replay_thresh']
-        self._actions = {int(0): 'forward', int(1): 'left', int(2): 'right'}
+        self._actions = {'forward': int(0), 'left': int(1), 'right': int(2)}
         self._states = {MB_params['curr_state']: int(0)}
         return
 
@@ -30,17 +30,22 @@ class metaAgent():
         return
 
     # Public methods
-    def action_selection(self, state: np.ndarray) -> Tuple[str, bool]:
+    def action_selection(self, state: np.ndarray, poss_moves: np.ndarray) -> Tuple[str, bool]:
         """
         Performs the action selection comparing the output of the 2 agents. The one that shows a higher Q value wins.
         Args:
             state: The state I am currently in (coordinates)
+            poss_moves: What are the currently available moves (strings)
 
         Returns:
             'straight', 'left', or 'right' as the chosen action; and
             True if we used the MF agent, False if we used the MB agent
         """
-        # TODO implement the decision
+        # 1) MF action selection
+        action_MF, Q_MF = None, None  # TODO the model-free Q value of the chosen step
+
+        # 2) MB action selection
+        action_MB, Q_MB = self._MB.choose_action(self._states[state], )
         pass
 
     def learning(self, state: np.ndarray, action: str, new_state: np.ndarray, reward: float) -> bool:
@@ -64,7 +69,7 @@ class metaAgent():
 
         # 2) Teach the MB agents
         delta_C = self._MB.learnQvalues(self._states[state],
-                                        list(self._actions.keys())[list(self._actions.values()).index(action)],
+                                        self._actions[action],
                                         self._states[new_state],
                                         reward)
         replayed = False
