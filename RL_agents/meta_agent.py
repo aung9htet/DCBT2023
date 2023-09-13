@@ -45,8 +45,14 @@ class metaAgent():
         action_MF, Q_MF = None, None  # TODO the model-free Q value of the chosen step
 
         # 2) MB action selection
-        action_MB, Q_MB = self._MB.choose_action(self._states[state], )
-        pass
+        action_MB, Q_MB = self._MB.choose_action(self._states[state],
+                                                 np.array([self._actions[move] for move in poss_moves]))
+
+        # 3) Compare results
+        if Q_MF >= Q_MB:
+            return list(self._actions.keys())[list(self._actions.values()).index(action_MF)], True
+        else:
+            return list(self._actions.keys())[list(self._actions.values()).index(action_MB)], False
 
     def learning(self, state: np.ndarray, action: str, new_state: np.ndarray, reward: float) -> bool:
         """

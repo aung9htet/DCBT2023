@@ -578,12 +578,12 @@ class RLagent:
             s = self.__translate_s__(s)
 
         # Let's make the decision:
+        u = None
         # 1) if epsilon greedy, and we explore
         if self._decision_rule == "epsilon":
             # Simplest case, we choose randomly
             if np.random.uniform(0, 1, 1) <= self._epsilon:
                 u = np.random.choice(u_poss)
-                return int(u)
 
         # 2) For the other methods combine all the potential constituents
         Q_poss = np.array([self._Q[s, idx_u] for idx_u in u_poss])
@@ -595,17 +595,22 @@ class RLagent:
         comb_Q_poss = np.array([self.__combine_Q_epist__(Q_poss[idx], H_rew=H_rew_poss[idx],
                                                          H_trans=H_trans_poss[idx]) for idx in range(len(u_poss))])
         # comb_Q_poss is between 0 and 1
+        if u is not None:
+            u_idx = np.where(u_poss == u)[0][0]
+            return int(u), comb_Q_poss[u_idx]
 
         # 3) If we choose to put these combined values through a softmax
         if self._decision_rule == "softmax":
             p_poss = np.exp(self._beta * comb_Q_poss) / np.sum(np.exp(self._beta * comb_Q_poss))
             u = np.random.choice(u_poss, p=p_poss)
-            return int(u)
+            u_idx = np.where(u_poss == u)[0][0]
+            return int(u), comb_Q_poss[u_idx]
 
         # 4) If we choose the maximum (either due to greedy or epsilon greedy policies)
         u_poss = u_poss[comb_Q_poss == max(comb_Q_poss)]
         u = np.random.choice(u_poss)
-        return int(u), self._Q[s, u]
+        u_idx = np.where(u_poss == u)[0][0]
+        return int(u), comb_Q_poss[u_idx]
 
     def learnQvalues(self, s: int, u: int, s_prime: int, r: float, **kwargs) -> float:
         """
