@@ -8,6 +8,12 @@ def MF_MB_spatial_navigation() -> None:
     Returns:
     """
     ####################################################################################################################
+    # Parameters of the experiment
+    # TODO rewise these parameters, potentially adaptively
+    steps = 50
+    ####################################################################################################################
+
+    ####################################################################################################################
     # Let's start by defining the MF agent's parameters
     # TODO add MF agent parameters here
     MF_params = dict()
@@ -51,4 +57,24 @@ def MF_MB_spatial_navigation() -> None:
     ####################################################################################################################
     # Initializing the agent
     T_Swift = metaAgent(MF_params=MF_params, MB_params=MB_params)
+    ####################################################################################################################
+
+    ####################################################################################################################
+    # Running the experiment
+    for _ in range(steps):
+        # 1) Ask the environment where we are
+        state = None  # TODO get the state
+
+        # 2) Choose an action
+        act = None  # TODO write an action selection algorithm for the meta_agent
+
+        # 3) Commit to action
+        rew = None  # TODO take the step using the robot
+        new_state = None
+
+        # 4) Learn
+        # TODO implement the learning via the meta agent (replay included)
+
+        # 5) If the agent reached a reward, send it back to the starting position
+        # TODO implement the agent backtracking. Potentially replay while doing so
     ####################################################################################################################
