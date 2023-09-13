@@ -26,8 +26,8 @@ def MF_MB_spatial_navigation() -> None:
     # About saving
     MB_params['save_data'] = False  # -------------------- Should save the steps taken into a csv?
     if MB_params['save_data']:
-        save_path = './savedata'  # ---------------------- Where should I save
-        save_tag = None  # ------------------------------- What tag should I put on saved data
+        MB_params['save_path'] = './savedata'  # --------- Where should I save
+        MB_params['save_tag'] = None  # ------------------ What tag should I put on saved data
 
     # About the agent
     MB_params['act_num'] = 3  # -------------------------- Size of action space # TODO make it adaptive
@@ -37,9 +37,9 @@ def MF_MB_spatial_navigation() -> None:
     MB_params['gamma'] = 0.9  # -------------------------- Discounting factor
     MB_params['decision_rule'] = 'max'  # ---------------- Greedy decisions (could be 'max', 'softmax', 'epsilon')
     if MB_params['decision_rule'] == 'epsilon':
-        epsilon = 0.1  # --------------------------------- Epsilon of the epsilon-greedy
+        MB_params['epsilon'] = 0.1  # -------------------- Epsilon of the epsilon-greedy
     elif MB_params['decision_rule'] == 'softmax':
-        beta = 100  # ------------------------------------ Beta for softmax
+        MB_params['beta'] = 100  # ----------------------- Beta for softmax
     MB_params['replay_type'] = 'priority'  # ------------- Replay ('priority', 'trsam', 'bidir', 'backwards', 'forward')
     MB_params['su_event'] = False  # --------------------- What constitutes an event (state-action: True; state: False)
     MB_params['replay_thresh'] = 0.01  # ----------------- Smallest surprise necessary to initiate replay
