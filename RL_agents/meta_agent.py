@@ -9,7 +9,6 @@ class metaAgent():
     """
 
     def __init__(self, MF_params: dict, MB_params: dict) -> None:
-        # TODO add the model free params
         self._MF = SECagent(**MF_params)
         self._MB = MBagent(**MB_params)
         self._replay_thresh = MB_params['replay_thresh']
@@ -45,7 +44,7 @@ class metaAgent():
         """
         # 1) MF action selection
         #action_MF, Q_MF = self.MF.action_selection(state)
-        action_MF, Q_MF = self.MF.choose_action(state)
+        action_MF, Q_MF = self._MF.choose_action(state)
 
         # 2) MB action selection
         action_MB, Q_MB = self._MB.choose_action(self._states[state],
@@ -75,15 +74,13 @@ class metaAgent():
 
         # 1) Teach the MF agent
         # Update SEC's STM based on previous (state,action) couplet
-        self.MF.update_STM(sa_couplet = [state, self._actions[action]])
-        self.MF.update_sequential_bias()
-        self.MF.update_LTM(reward)
+        self._MF.update_STM(sa_couplet=[state, self._actions[action]])
+        self._MF.update_sequential_bias()
+        self._MF.update_LTM(reward)
 
         # 2) Teach the MB agents
-        delta_C = self._MB.learnQvalues(self._states[state],
-                                        self._actions[action],
-                                        self._states[new_state],
-                                        reward)
+        self._MB.model_tuning(self._states[state], self._actions[action], self._states[new_state], reward)
+        delta_C = self._MB.learnQvalues(self._states[state], self._actions[action], self._states[new_state], reward)
         replayed = False
         if self._replay_thresh is not None and delta_C > self._replay_thresh:
             self._MB.memory_replay()
@@ -97,4 +94,4 @@ class metaAgent():
         """
         Reset the short-term memory of the MF agent
         """
-        self.MF.reset_memory()
+        self._MF.reset_memory()

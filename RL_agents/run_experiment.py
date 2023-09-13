@@ -15,10 +15,7 @@ def MF_MB_spatial_navigation() -> None:
 
     ####################################################################################################################
     # Let's start by defining the MF agent's parameters
-    # TODO add MF agent parameters here
     MF_params = dict()
-    ####################################################################################################################
-
     MF_params['action_space']= 3
 
     # About the agent
@@ -63,7 +60,7 @@ def MF_MB_spatial_navigation() -> None:
     elif MB_params['decision_rule'] == 'softmax':
         MB_params['beta'] = 100  # ----------------------- Beta for softmax
     MB_params['state_num'] = None  # --------------------- The size of the state space
-    MB_params['curr_state'] = np.array([0, 0])  # -------- The current location of the agent # TODO make it flexible
+    MB_params['curr_state'] = np.array([0, 0, 0])  # ----- The current location of the agent # TODO make it flexible
     MB_params['replay_type'] = 'priority'  # ------------- Replay ('priority', 'trsam', 'bidir', 'backwards', 'forward')
     MB_params['su_event'] = False  # --------------------- What constitutes an event (state-action: True; state: False)
     MB_params['replay_thresh'] = 0.01  # ----------------- Smallest surprise necessary to initiate replay
@@ -85,26 +82,22 @@ def MF_MB_spatial_navigation() -> None:
 
     ####################################################################################################################
     # Running the experiment
-    state = env.reset() # Hypothetical intial state given by the environment
+    # 1) Get the first state
+    state = env.reset() # Hypothetical intial state given by the environment # TODO need env or obtain 1st observation
 
     for _ in range(steps):
-        # 1) Ask the environment where we are
-        # TODO get the state
-        #state = None
-
         # 2) Choose an action
-        # TODO write an action selection algorithm for the meta_agent
-        action = T_Swift.action_selection(state)
+        action, MF_winner = T_Swift.action_selection(state, poss_moves)
 
         # 3) Commit to action
-        # TODO take the step using the robot
+        # TODO take the step using the robot, light up based on MF_winner
         #reward = None
         #new_state = None
         new_state, reward, done = env.step(action)
 
         # 4) Learn
-        # TODO implement the learning via the meta agent (replay included)
-        T_Swift.learning()
+        replayed = T_Swift.learning(state, action, new_state, reward)
+        # TODO give replayed to agent
 
         # 5) If the agent reached a reward, send it back to the starting position
         # TODO implement the agent backtracking. Potentially replay while doing so
