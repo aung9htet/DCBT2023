@@ -14,6 +14,9 @@ from sensor_msgs.msg import Image, Range, JointState
 from geometry_msgs.msg import TwistStamped
 from std_msgs.msg import UInt32MultiArray
 
+# ROS services import
+from std_srvs.srv import Empty
+
 # class Node:
 #     """
 #         Nodes that may be required for a 2 dimensional doubly linked list
@@ -297,6 +300,11 @@ class State_Representation:
                     check_connection = False
             if self.sonar is None:
                 check_connection = False
+
+        # ROS service processing
+        rospy.wait_for_service('/gazebo/reset_world')
+        # the following method can be used for resetting the world
+        self.reset_world = rospy.ServiceProxy('/gazebo/reset_world', Empty)
 
     def callback_sonar(self, data):
         """
@@ -598,15 +606,17 @@ class Action_State_RL(State_Representation):
             deduction
         """
         return False
+    
 # makes the miro move in circles
 testing = Action_State_RL("action_pub")
-testing.map_representation.show_map()
-print(testing.map_representation.agent_pos)
-testing.movement('straight')
-testing.movement('straight')
-testing.movement('straight')
-testing.movement('straight')
-testing.movement('straight')
+testing.reset_world()
+# testing.map_representation.show_map()
+# print(testing.map_representation.agent_pos)
+# testing.movement('straight')
+# testing.movement('straight')
+# testing.movement('straight')
+# testing.movement('straight')
+# testing.movement('straight')
 # while not rospy.is_shutdown():
     # testing.get_camera("right")
     # print(np.array(testing.camera_data["left"]).shape)
