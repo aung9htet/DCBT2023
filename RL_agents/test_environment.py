@@ -503,14 +503,17 @@ class PlotterEnv(Env):
         :param it: the iteration we are in
         :return:
         """
-        # wall = 0, path = 1, reward = 2, agent = 3
+        # wall = 0, path = 1, reward = 2, MFagent = 3, MBagent = 4
         image = np.zeros(self._maze.shape)
         image[self._maze >= 0] = 1
         reward_num = int((self._events.shape[1] - 3) / 4)
         for rew_idx in range(reward_num):
             image[int(self._events[f'rew_pos_x{rew_idx}'].iloc[it]),
-                  int(self._events[f'rew_pos_y{rew_idx}'].iloc[it])] = 2
-        image[int(self._events['agent_pos_x'].iloc[it]), int(self._events['agent_pos_y'].iloc[it])] = 3
+            int(self._events[f'rew_pos_y{rew_idx}'].iloc[it])] = 2
+        if self._events['agent_type'].iloc[it] == 0:
+            image[int(self._events['agent_pos_x'].iloc[it]), int(self._events['agent_pos_y'].iloc[it])] = 3
+        else:
+            image[int(self._events['agent_pos_x'].iloc[it]), int(self._events['agent_pos_y'].iloc[it])] = 4
         return image
 
     def __replay_to_image__(self, curr_image: np.ndarray, row_idx: int) -> np.ndarray:
@@ -562,17 +565,21 @@ class PlotterEnv(Env):
         Q_vals = pd.DataFrame()
         H_rew_vals, H_trans_vals = pd.DataFrame(), pd.DataFrame()
         for s_idx in range(self.state_num()):
-            cols = [f'Q_{s_idx}_{u_idx}' for u_idx in range(self.act_num())]
-            Q_vals[f'Q_{s_idx}'] = self._agent_events[cols].max(axis=1)
+            if f'Q_{s_idx}_0' in self._agent_events.columns:
+                cols = [f'Q_{s_idx}_{u_idx}' for u_idx in range(self.act_num())]
+                Q_vals[f'Q_{s_idx}'] = self._agent_events[cols].max(axis=1)
+            else:
+                Q_vals[f'Q_{s_idx}'] = pd.DataFrame(np.zeros(self._agent_events.shape[0]),
+                                                    columns=[f'Q_{s_idx}'])
 
-            if 'H_rew_0_0' in self._agent_events.columns:
+            if f'H_rew_{s_idx}_0' in self._agent_events.columns:
                 cols = [f'H_rew_{s_idx}_{u_idx}' for u_idx in range(self.act_num())]
                 H_rew_vals[f'H_rew_{s_idx}'] = self._agent_events[cols].mean(axis=1)
             else:
                 H_rew_vals[f'H_rew_{s_idx}'] = pd.DataFrame(np.zeros(self._agent_events.shape[0]),
                                                             columns=[f'H_rew_{s_idx}'])
 
-            if 'H_trans_0_0' in self._agent_events.columns:
+            if f'H_trans_{s_idx}_0' in self._agent_events.columns:
                 cols = [f'H_trans_{s_idx}_{u_idx}' for u_idx in range(self.act_num())]
                 H_trans_vals[f'H_trans_{s_idx}'] = self._agent_events[cols].mean(axis=1)
             else:
@@ -591,10 +598,9 @@ class PlotterEnv(Env):
         curr_maze = self.__status_to_image__(0)
         curr_replay = np.zeros(self._maze.shape)
         curr_Q = self.__event_to_img__(Q_vals.iloc[0])
-        axim_Q = np.array([ax_Q[0].imshow(curr_maze),
+        axim_Q = np.array([ax_Q[0].imshow(curr_maze, vmin=0, vmax=4),
                            ax_Q[1].imshow(curr_replay),
                            ax_Q[2].imshow(curr_Q, vmin=0, vmax=Q_max)])
-        axim_Q[0].autoscale()  # Since here the extremes already appear
         axim_Q[1].autoscale()  # This will have to be done in every step if we want the old replay steps to fade away
 
         fig_H, ax_H = plt.subplots(nrows=1, ncols=2, figsize=(10, 4))

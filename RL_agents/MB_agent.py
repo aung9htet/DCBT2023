@@ -743,7 +743,7 @@ class RLagent:
                 u = int(event[1])
                 if not self._su_event:
                     u_poss = self.__find_good_actions__(s)
-                    u = self.choose_action(s, u_poss, virtual=True)
+                    u, _ = self.choose_action(s, u_poss, virtual=True)
                 s_prime = np.random.choice(list(range(self._nS)), p=self._T[s, u, :])
                 delta_curr = self.learnQvalues(s=s, u=u, s_prime=s_prime,
                                                r=self._R[int(event[0]), int(event[1])],

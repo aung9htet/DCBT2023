@@ -40,7 +40,9 @@ class metaAgent():
         Returns:
 
         """
-        return np.where((self._states == np.array([state])).all(axis=1))[0][0]
+        # return np.where((self._states == np.array([state])).all(axis=1))[0][0]
+        # TODO this is only for the virtual version
+        return state[0]
 
     # Public methods
     def action_selection(self, state: np.ndarray, poss_moves: np.ndarray) -> Tuple[str, bool]:
@@ -66,6 +68,7 @@ class metaAgent():
         # 3) Compare results
         if Q_MF >= Q_MB:
             return list(self._actions.keys())[list(self._actions.values()).index(action_MF)], True
+            # return list(self._actions.keys())[list(self._actions.values()).index(action_MB)], False
         else:
             return list(self._actions.keys())[list(self._actions.values()).index(action_MB)], False
 

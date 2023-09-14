@@ -3,6 +3,18 @@ from meta_agent import *
 from test_environment import *
 from tqdm import tqdm
 
+def experiment_plotter(path: str, env_file: str, agent_file: str):
+    """
+    Plots the data gathered from a specific experiment
+    :param path: path to the experimental data
+    :param env_file: name of the environment file [.txt]
+    :param agent_file: name of the agent events file [.csv]
+    :return:
+    """
+    pe = PlotterEnv(env_file, path=path)
+    pe.load_events(agent_file, path=path)
+    pe.plot_events()
+
 def MF_MB_spatial_navigation() -> None:
     """
     This function realizes the simple navigation by creating a meta agent and passing the messages from the environment
@@ -13,7 +25,7 @@ def MF_MB_spatial_navigation() -> None:
     # Parameters of the experiment
     # TODO rewise these parameters, potentially adaptively, and replace the test environment
     env_params = dict()
-    steps = 200
+    steps = 2000
     env_params['actions'] = ['0', '1', '2', '3']
 
     # About saving
