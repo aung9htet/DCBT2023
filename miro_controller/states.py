@@ -12,6 +12,7 @@ from tf.transformations import euler_from_quaternion
 from nav_msgs.msg import Odometry 
 from sensor_msgs.msg import Image, Range, JointState
 from geometry_msgs.msg import TwistStamped
+from std_msgs.msg import UInt32MultiArray
 
 # class Node:
 #     """
@@ -104,10 +105,19 @@ class Map_Representation():
                     [position x on matrix, position y on matrix, yaw]
                     yaw: 0 for up, 1 for right, 2 for down, 3 for left
         """
-        self.matrix = [[Node(), Node(), Node()],
-                       [Node(), Node(), Node()],
-                       [Node(), Node(), Node()]]
-        self.agent_pos = [1,1,0]
+        if parameters.FIXED_MAP == False:
+            self.matrix = [[Node(), Node(), Node()],
+                        [Node(), Node(), Node()],
+                        [Node(), Node(), Node()]]
+        else:
+            self.matrix_row = []
+            # each row has the number of items based on how many columns there is
+            for _ in range(parameters.MAP_COLUMN):
+                self.matrix_row.append(Node())
+            self.matrix = []
+            for _ in range(parameters.MAP_ROW):
+                self.matrix.append(self.matrix_row)
+        self.agent_pos = parameters.STARTING_POSITION
         # self.agent_matrix = lambda x: np.add(x, [1,1]).tolist()
 
     def add_column(self, direction):
@@ -269,6 +279,9 @@ class State_Representation:
         self.kinematic_pub = rospy.Publisher(
             topic_base_name + "/control/kinematic_joints", JointState, queue_size=0
         )
+        self.illum_pub = rospy.Publisher(
+            topic_base_name + "/control/illum", UInt32MultiArray, queue_size=0
+        )
         # rospy.sleep(parameters.SLEEP_TIMER)
         self.rate = rospy.Rate(parameters.REFRESH_RATE)
 
@@ -374,6 +387,24 @@ class State_Representation:
         """
         return self.number_of_steps
     
+    def reset_environment(self):
+        """
+            TODO: reset_environment method will reset both the embodied agent and the positional
+            matrix representation of itself
+        """
+        return False
+    
+    def get_current_agent_node(self):
+        """
+            The following method gets recorded node data from the agent's known state space
+        """
+        agent_x = self.map_representation.agent_pos[0]
+        agent_y = self.map_representation.agent_pos[1]
+        # its rearranged since the first array dimension is the column and the second
+        # dimension is the row
+        get_node = self.map_representation.matrix[agent_y][agent_x]
+        return get_node
+    
 class Action_State_RL(State_Representation):
     
     def __init__(self, node_name):
@@ -403,12 +434,12 @@ class Action_State_RL(State_Representation):
                             check for wall
         """
         if default == True:
-            if self.sonar < parameters.WALL_RANGE:
+            if self.sonar < parameters.WALL_RANGE_NEAR:
                 return True
             else:
                 return False
         else:
-            if self.sonar < parameters.WALL_RANGE:
+            if self.sonar < parameters.WALL_RANGE_FAR:
                 return True
             else:
                 return False
@@ -497,11 +528,21 @@ class Action_State_RL(State_Representation):
         possible_actions['right'] = self.action_dict['right']
         # decide whether to add straight or not based on whether
         # the format wants it to check for wall or not
-        if reformat is False:
+        add_straight = True
+        if reformat is True:
+            if self.check_wall(default=False) == True:
+                add_straight = False
+        if parameters.FIXED_MAP is True:
+            if (self.map_representation.agent_pos[2] == 0) and (self.map_representation.agent_pos[1] == 0):
+                add_straight = False
+            elif (self.map_representation.agent_pos[2] == 1) and (self.map_representation.agent_pos[0] == len(self.map_representation.matrix[0]) - 1):
+                add_straight = False
+            elif (self.map_representation.agent_pos[2] == 2) and (self.map_representation.agent_pos[1] == len(self.map_representation.matrix) - 1):
+                add_straight = False
+            elif (self.map_representation.agent_pos[2] == 3) and (self.map_representation.agent_pos[0] == 0):
+                add_straight = False
+        if add_straight == True:
             possible_actions['straight'] = self.action_dict['straight']
-        else:
-            if self.check_wall(default=False) == False:
-                possible_actions['straight'] = self.action_dict['straight']
         return possible_actions
 
     def act_smart(self):
@@ -522,6 +563,41 @@ class Action_State_RL(State_Representation):
             neck_msg.position = [0.1, 0, value, 0]
             self.kinematic_pub.publish(neck_msg)
 
+    def light_model(self, model_type):
+        """
+            light_model function is supposed to change the lights based on whether it
+            is "MF" for green or "MB" for red.
+
+            :param model_type: Choose whether to behave based on "MF" or "MB"
+        """
+        color_change = UInt32MultiArray()
+        if model_type == "MF":
+            # green color
+            color = (50, 200, 50)
+        elif model_type == "MB":
+            # red color
+            color = (200, 50, 50)
+        else:
+            color = (0, 0, 0)
+        color = '0xFF%02x%02x%02x'%color
+        color = int(color, 16)
+        color_change.data = [
+            color,
+            color,
+            color,
+            color,
+            color,
+            color
+        ]
+        self.illum_pub.publish(color_change)
+
+    def get_reward(self):
+        """
+            TODO: get_reward method is supposed to give the user with the reward
+            values related to this state space based on its vision based
+            deduction
+        """
+        return False
 # makes the miro move in circles
 testing = Action_State_RL("action_pub")
 testing.map_representation.show_map()
@@ -534,3 +610,11 @@ testing.movement('straight')
 # while not rospy.is_shutdown():
     # testing.get_camera("right")
     # print(np.array(testing.camera_data["left"]).shape)
+    
+# To Test
+# 1: Wall Check
+# 2: Light
+# 3: Act Smart
+# 4: Adjust Model Distances
+# 5: Matrix Representation
+# 6: Reward
