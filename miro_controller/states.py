@@ -10,7 +10,7 @@ from tf.transformations import euler_from_quaternion
 
 # ROS messages import
 from nav_msgs.msg import Odometry 
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, Range, JointState
 from geometry_msgs.msg import TwistStamped
 
 # class Node:
@@ -233,8 +233,10 @@ class State_Representation:
                 camr_sub: The subscriber for right camera
                 vel_pub: The publisher for movement
                 vel_sub: The subscriber for movement
-                self.rate = The sleeping rate for the rospy code with the refresh rate
+                self.rate: The sleeping rate for the rospy code with the refresh rate
                     controlled in parameters.py
+                sonar: contains how far an object is from itself
+                number_of_steps: The timestep for the model
         """
         rospy.init_node(node_name)
         self.action_dict = {}
@@ -243,6 +245,7 @@ class State_Representation:
         self.bridge = CvBridge()
         self.camera_data = {'left': None, 'right': None}
         self.sonar = None
+        self.number_of_steps = 0
 
         # ROS data processing
         topic_base_name = "/" + os.getenv("MIRO_ROBOT_NAME")
@@ -261,7 +264,10 @@ class State_Representation:
             topic_base_name + "/sensors/odom", Odometry, self.callback_vel
         )
         self.sonar_sub = rospy.Subscriber(
-            topic_base_name + "/sensors/sonar", Odometry, self.callback_sonar
+            topic_base_name + "/sensors/sonar", Range, self.callback_sonar
+        )
+        self.kinematic_pub = rospy.Publisher(
+            topic_base_name + "/control/kinematic_joints", JointState, queue_size=0
         )
         # rospy.sleep(parameters.SLEEP_TIMER)
         self.rate = rospy.Rate(parameters.REFRESH_RATE)
@@ -331,10 +337,13 @@ class State_Representation:
     def movement(self, action_selection):
         """
             movement function formalizes the actions that are available to use
+            the following method is used for the agent to work on actionable states
+            in each timestep
 
             :param action_selection: the key for the dictionary to choose action
         """
         self.action_dict[action_selection]()
+        self.number_of_steps += 1
         self.map_representation.move(action_selection)
         self.map_representation.show_map()
     
@@ -351,6 +360,20 @@ class State_Representation:
             cv2.imshow("Image window", camera_data)
             cv2.waitKey(3)
 
+    def get_states(self):
+        """
+            the following function will get states of the world for the user and if 
+            required will translate to data needed by the user
+        """
+        return self.position_dict
+    
+    def get_timestep(self):
+        """
+            the following function is supposed to get the number of timesteps taken by
+            the agent
+        """
+        return self.number_of_steps
+    
 class Action_State_RL(State_Representation):
     
     def __init__(self, node_name):
@@ -359,11 +382,15 @@ class Action_State_RL(State_Representation):
 
             Attributes:
                 action_dict: The actions need to be added to this dictionary
+                neck_side: This parameter makes the neck decide to go either left or right
+                neck_timer: This is used to decide when the neck should turn
         """
         super().__init__(node_name)
         self.action_dict['left'] = self.left
         self.action_dict['right'] = self.right
         self.action_dict['straight'] = self.straight
+        self.neck_side = None
+        self.neck_timer = time.time()
 
     def check_wall(self, default=True):
         """
@@ -476,6 +503,24 @@ class Action_State_RL(State_Representation):
             if self.check_wall(default=False) == False:
                 possible_actions['straight'] = self.action_dict['straight']
         return possible_actions
+
+    def act_smart(self):
+        """
+            act_smart is supposed to turn the miro's neck to act as if it is thinking
+            when it is replaying
+        """
+        # turn the neck every decided period
+        if (time.time() - self.neck_timer) < parameters.NECK_TIMER:
+            # decide which way to turn
+            if value == None:
+                value = -0.5
+            elif value == 0.5:
+                value = -0.5
+            else:
+                value = 0.5
+            neck_msg = JointState()
+            neck_msg.position = [0.1, 0, value, 0]
+            self.kinematic_pub.publish(neck_msg)
 
 # makes the miro move in circles
 testing = Action_State_RL("action_pub")

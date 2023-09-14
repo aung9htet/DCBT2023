@@ -6,6 +6,7 @@ DEGREE_OF_TURN = (np.pi/2)
 TURN_SPEED = (np.pi/12)
 STRAIGHT_SPEED = 0.3
 WALL_RANGE = 0.1
+NECK_TIMER = 1
 
 # rospy settings
 REFRESH_RATE = 100
