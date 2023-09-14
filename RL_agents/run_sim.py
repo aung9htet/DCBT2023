@@ -2,6 +2,7 @@
 from meta_agent import *
 from test_environment import *
 from tqdm import tqdm
+import rospy
 import miro_controller.states, miro_controller.parameters
 
 def MF_MB_spatial_navigation() -> None:
@@ -13,28 +14,33 @@ def MF_MB_spatial_navigation() -> None:
     ####################################################################################################################
     # Parameters of the experiment
     # TODO rewise these parameters, potentially adaptively, and replace the test environment
+    rospy.init_node('rl_sim_node')
+    miro_env = miro_controller.states.Action_State_RL(None)
+    rospy.sleep(0.5)
     env_params = dict()
     steps = 200
-    env_params['actions'] = ['0', '1', '2', '3']
+    print("Hi")
+    env_params['actions'] = miro_env.get_all_action()
+
 
     # About saving
-    env_params['save_data'] = True  # -------------------- Should I even save at all
-    env_params['save_path'] = './savedata'  # ------------ Where should I save
-    env_params['save_tag'] = None  # --------------------- What tag should I put on saved data
+    # env_params['save_data'] = True  # -------------------- Should I even save at all
+    # env_params['save_path'] = './savedata'  # ------------ Where should I save
+    # env_params['save_tag'] = None  # --------------------- What tag should I put on saved data
 
-    # About the maze
+    # # About the maze
     env_params['num_steps'] = steps  # -------------------- How many steps do we model
-    env_params['rew_change'] = int(steps / 2)  # ---------- When do we change the reward location (if we do)
-    env_params['rew_loc'] = np.array([20])  # ------------- What is (are) the rewarded state(s)
+    # env_params['rew_change'] = int(steps / 2)  # ---------- When do we change the reward location (if we do)
+    # env_params['rew_loc'] = np.array([20])  # ------------- What is (are) the rewarded state(s)
     env_params['rew_val'] = np.array([1])  # -------------- What is (are) the value(s) of the reward(s)
-    env_params['rew_prob'] = np.array([1])  # ------------- What is (area) the probability/ies of the reward(s)
-    env_params['new_rew_loc'] = np.array([22])  # --------- What is (are) the rewarded state(s)
-    env_params['new_rew_val'] = np.array([1])  # ---------- What is (are) the value(s) of the reward(s)
-    env_params['new_rew_prob'] = np.array([1])  # --------- What is (area) the probability/ies of the reward(s)
-    env_params['start_pos'] = 21  # ----------------------- What state do we start from
-    env_params['forbidden_walls'] = True  # --------------- Is it forbidden to bump into walls?
-    env_params['restricted_dT'] = False  # ---------------- Is the movement restricted to unidirectional?
-    env_params['slip_prob'] = 0  # ------------------------ The probability of slipping after a step
+    # env_params['rew_prob'] = np.array([1])  # ------------- What is (area) the probability/ies of the reward(s)
+    # env_params['new_rew_loc'] = np.array([22])  # --------- What is (are) the rewarded state(s)
+    # env_params['new_rew_val'] = np.array([1])  # ---------- What is (are) the value(s) of the reward(s)
+    # env_params['new_rew_prob'] = np.array([1])  # --------- What is (area) the probability/ies of the reward(s)
+    # env_params['start_pos'] = 21  # ----------------------- What state do we start from
+    # env_params['forbidden_walls'] = True  # --------------- Is it forbidden to bump into walls?
+    # env_params['restricted_dT'] = False  # ---------------- Is the movement restricted to unidirectional?
+    # env_params['slip_prob'] = 0  # ------------------------ The probability of slipping after a step
     ####################################################################################################################
 
     ####################################################################################################################
@@ -43,7 +49,7 @@ def MF_MB_spatial_navigation() -> None:
     MF_params['action_space']= len(env_params['actions'])
 
     # About the agent
-    MF_params['pl']= 2
+    MF_params['pl']= 3
     MF_params['stm']= 15                      # default: 50, test: 10
     MF_params['ltm']= 250                     # default: 50K, test: 10K
     MF_params['sequential_bias']= True        # default: True
@@ -103,16 +109,16 @@ def MF_MB_spatial_navigation() -> None:
 
     ####################################################################################################################
     # Initializing the environment and the agent
-    env = dTmaze(forbidden_walls=env_params['forbidden_walls'],
-                 restricted_dT=env_params['restricted_dT'],
-                 slip_prob=env_params['slip_prob'])
+    # env = dTmaze(forbidden_walls=env_params['forbidden_walls'],
+    #              restricted_dT=env_params['restricted_dT'],
+    #              slip_prob=env_params['slip_prob'])
 
     # 1) Get the first state
     # TODO need env or obtain 1st state
-    env.place_reward(env_params['rew_loc'],
-                     env_params['rew_val'],
-                     env_params['rew_prob'])
-    state = env.place_agent(env_params['start_pos'])
+    # env.place_reward(env_params['rew_loc'],
+    #                  env_params['rew_val'],
+    #                  env_params['rew_prob'])
+    state = miro_env.get_states()
     MB_params['curr_state'] = state
 
     T_Swift = metaAgent(MF_params=MF_params,
@@ -121,21 +127,25 @@ def MF_MB_spatial_navigation() -> None:
 
     ####################################################################################################################
     # Initiating saving for visual purposes
-    if env_params['save_data']:
-        env.toggle_save()
-    if MB_params['save_data']:
-        T_Swift.toggle_save()
+    # if env_params['save_data']:
+    #     env.toggle_save()
+    # if MB_params['save_data']:
+    #     T_Swift.toggle_save()
 
     # Running the experiment
     for step in tqdm(range(env_params['num_steps'])):
         # 2) Choose an action
         # TODO ask the environment for possible moves
-        poss_moves = env.possible_moves(state)
+        poss_moves = miro_env.get_possible_action(reformat=True)
         action, MF_winner = T_Swift.action_selection(state, poss_moves)
 
         # 3) Commit to action
         # TODO take the step using the robot, light up based on MF_winner
-        new_state, reward, done = env.step(state, action, MF_winner=MF_winner)
+        # new_state, reward, done = env.step(state, action, MF_winner=MF_winner)
+        # move the miro
+        miro_env.movement(action)
+        new_state = miro_env.get_states()
+        reward = miro_env.get_reward()
 
         # 4) Learn
         replayed = T_Swift.learning(state, action, new_state, reward)
@@ -143,22 +153,23 @@ def MF_MB_spatial_navigation() -> None:
 
         # 5) If the agent reached a reward, send it back to the starting position
         # TODO implement the agent backtracking. Potentially replay while doing so
-        if done:
-            state = env.place_agent(env_params['start_pos'])
+        if reward == 1:
+            miro_env.reset_world()
             T_Swift.reset()
         else:
             state = new_state
 
         # 6) Change reward location if must
-        if step == env_params['rew_change']:
-            env.reset_reward()
-            env.place_reward(env_params['new_rew_loc'],
-                             env_params['new_rew_val'],
-                             env_params['new_rew_prob'])
+        # if step == env_params['rew_change']:
+        #     env.reset_reward()
+        #     env.place_reward(env_params['new_rew_loc'],
+        #                      env_params['new_rew_val'],
+        #                      env_params['new_rew_prob'])
 
     # 7) Save for visualization
-    if env_params['save_data']:
-        env.dump_env(path=env_params['save_path'], label=env_params['save_tag'])
-    if MB_params['save_data']:
-        T_Swift.dump_agent(path=MB_params['save_path'], label=MB_params['save_tag'])
+    # if env_params['save_data']:
+    #     env.dump_env(path=env_params['save_path'], label=env_params['save_tag'])
+    # if MB_params['save_data']:
+    #     T_Swift.dump_agent(path=MB_params['save_path'], label=MB_params['save_tag'])
     ####################################################################################################################
+MF_MB_spatial_navigation()

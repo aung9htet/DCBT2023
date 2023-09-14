@@ -167,7 +167,7 @@ class RLagent:
         return
 
     # Methods related to the inner workings of the agent
-    def __translate_s__(self, s: int) -> int | None:
+    def __translate_s__(self, s: int):
         """
         Translates s into labels recognized by the agent (in case of automatically increasing state space)
         :param s: the state as detected from the environment
@@ -180,7 +180,7 @@ class RLagent:
         except AttributeError:
             return s
 
-    def __su_entropy__(self, s: int, u: int, mode: str) -> float | None:
+    def __su_entropy__(self, s: int, u: int, mode: str):
         """
         Computes the entropy under the specified circumstances
         :param s: The state
@@ -336,8 +336,7 @@ class RLagent:
                 self._memory_buff[insertion_idx[0], :] = to_store
                 return
 
-    def __epist_update__(self, s: int, u: int, **kwargs) -> float | np.ndarray | Tuple[float, np.ndarray] | \
-                                                            None | Tuple[None, None]:
+    def __epist_update__(self, s: int, u: int, **kwargs):
         """
         A function that can serve two different purposes. It can either estimate and return the updated epistemic values
         of a state (used for finding proper predecessors) or it can actually perform the update, in this case, returning
@@ -776,7 +775,7 @@ class RLagent:
             self.__trajectory_sampling__(s, stop_loc=np.unique(stop_loc), steps=self._max_replay - it)
         return
 
-    def agent_type(self) -> None | str:
+    def agent_type(self):
         """
         Simple getter for the agent type
         :return: 'MB' or 'MF'
@@ -974,7 +973,7 @@ class MFagent(RLagent):
         self._Q[s, u] += self._alpha * TD_error
         return TD_error
 
-    def agent_type(self) -> None | str:
+    def agent_type(self):
         """
         Simple getter for the agent type
         :return: 'MB' or 'MF'
@@ -1277,7 +1276,7 @@ class MBagent(RLagent):
         self._R[s, u] = self._kappa * r + (1 - self._kappa) * self._R[s, u]  # exponentially weighted moving average
         return
 
-    def agent_type(self) -> None | str:
+    def agent_type(self):
         """
         Simple getter for the agent type
         :return: 'MB' or 'MF'
