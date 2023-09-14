@@ -25,7 +25,7 @@ def MF_MB_spatial_navigation() -> None:
     # Parameters of the experiment
     # TODO rewise these parameters, potentially adaptively, and replace the test environment
     env_params = dict()
-    steps = 2000
+    steps = 10000
     env_params['actions'] = ['0', '1', '2', '3']
 
     # About saving
@@ -36,14 +36,14 @@ def MF_MB_spatial_navigation() -> None:
     # About the maze
     env_params['num_steps'] = steps  # -------------------- How many steps do we model
     env_params['rew_change'] = int(steps / 2)  # ---------- When do we change the reward location (if we do)
-    env_params['rew_loc'] = np.array([20])  # ------------- What is (are) the rewarded state(s)
+    env_params['rew_loc'] = np.array([2])  # ------------- What is (are) the rewarded state(s)
     env_params['rew_val'] = np.array([1])  # -------------- What is (are) the value(s) of the reward(s)
     env_params['rew_prob'] = np.array([1])  # ------------- What is (area) the probability/ies of the reward(s)
     env_params['new_rew_loc'] = np.array([22])  # --------- What is (are) the rewarded state(s)
     env_params['new_rew_val'] = np.array([1])  # ---------- What is (are) the value(s) of the reward(s)
     env_params['new_rew_prob'] = np.array([1])  # --------- What is (area) the probability/ies of the reward(s)
     env_params['start_pos'] = 21  # ----------------------- What state do we start from
-    env_params['forbidden_walls'] = True  # --------------- Is it forbidden to bump into walls?
+    env_params['forbidden_walls'] = False  # -------------- Is it forbidden to bump into walls?
     env_params['restricted_dT'] = False  # ---------------- Is the movement restricted to unidirectional?
     env_params['slip_prob'] = 0  # ------------------------ The probability of slipping after a step
     ####################################################################################################################
