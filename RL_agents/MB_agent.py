@@ -1249,7 +1249,7 @@ class MBagent(RLagent):
                 else:
                     break
 
-    def model_tuning(self, s: int, u, s_prime: int, r: int) -> None:
+    def model_tuning(self, s: int, u: int, s_prime: int, r: int) -> None:
         """
         Tuning of the agent's model parameters
         :param s: current state label

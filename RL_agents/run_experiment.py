@@ -15,8 +15,28 @@ def MF_MB_spatial_navigation() -> None:
 
     ####################################################################################################################
     # Let's start by defining the MF agent's parameters
-    # TODO add MF agent parameters here
     MF_params = dict()
+    MF_params['action_space']= 3
+
+    # About the agent
+    MF_params['pl']= 2
+    MF_params['stm']= 15                      # default: 50, test: 10
+    MF_params['ltm']= 250                     # default: 50K, test: 10K
+    MF_params['sequential_bias']= True        # default: True
+    MF_params['sequential_value']= 0.02       # default animalai: 0.01
+    MF_params['forget_mode']= 'RWD-SING'       # types = ['FIFO-SING', 'FIFO-PROP', 'RWD-SING', 'RWD-PROP', 'LRU-SING', 'LRU-PROP', 'LRU-PROB'] - default: FIFO-SING
+    MF_params['forget_ratio']= 0.1            # default = 0.1
+    MF_params['retrieval']= 'default'         # types = ['default', 'k_neighbors']
+    MF_params['similarity_threshold']= 0.995               # DEFAULT: 0.1, for ERLAM RPs dim 4: 0.0000001, DEFAULT for SEC AE dim 20: 0.2, SEX initial: 0.1
+    MF_params['k_neighbors']= 1               # DEFAULT FOR MFEC IN ATARI - 11 NEIGHBORS PER ACTION BUFFER!
+    MF_params['value_function']= 'noDist'    # value_functions = ['default', 'noGi', 'noDist', 'noRR', 'soloGi', 'soloDist', 'soloRR']
+    MF_params['reward_decay']= 0.9            # default animalai: 0.9
+    MF_params['softmax']= False               # originally = False, ATARI = True
+    MF_params['selection_mode']= 'argmax'     # selection_mode = ['default', 'argmax']
+    MF_params['exploration_mode']= 'epsilon'  # exploration_mode = ['default', 'epsilon', 'epsilon_decay']
+    MF_params['exploration_steps']= 150      # THE UNITS ARE NUMBER OF AGENT STEPS! - NatureDQN: 50k STEPS / 50 EPISODES ANIMALAI
+    MF_params['epsilon']= 0.1                 # DEFAULT FOR MFEC IN ATARI: 0.1
+    MF_params['load_ltm']=  False
     ####################################################################################################################
 
     ####################################################################################################################
@@ -41,7 +61,7 @@ def MF_MB_spatial_navigation() -> None:
     elif MB_params['decision_rule'] == 'softmax':
         MB_params['beta'] = 100  # ----------------------- Beta for softmax
     MB_params['state_num'] = None  # --------------------- The size of the state space
-    MB_params['curr_state'] = np.array([0, 0])  # -------- The current location of the agent # TODO make it flexible
+    MB_params['curr_state'] = np.array([0, 0, 0])  # ----- The current location of the agent # TODO make it flexible
     MB_params['replay_type'] = 'priority'  # ------------- Replay ('priority', 'trsam', 'bidir', 'backwards', 'forward')
     MB_params['su_event'] = False  # --------------------- What constitutes an event (state-action: True; state: False)
     MB_params['replay_thresh'] = 0.01  # ----------------- Smallest surprise necessary to initiate replay
@@ -63,20 +83,27 @@ def MF_MB_spatial_navigation() -> None:
 
     ####################################################################################################################
     # Running the experiment
-    for _ in range(steps):
-        # 1) Ask the environment where we are
-        state = None  # TODO get the state
+    # 1) Get the first state
+    state = env.reset() # Hypothetical intial state given by the environment # TODO need env or obtain 1st state
 
+    for _ in range(steps):
         # 2) Choose an action
-        act = None  # TODO write an action selection algorithm for the meta_agent
+        # TODO ask the environment for possible moves
+        action, MF_winner = T_Swift.action_selection(state, poss_moves)
 
         # 3) Commit to action
-        rew = None  # TODO take the step using the robot
-        new_state = None
+        # TODO take the step using the robot, light up based on MF_winner
+        new_state, reward, done = env.step(action, MF_winner)
 
         # 4) Learn
-        # TODO implement the learning via the meta agent (replay included)
+        replayed = T_Swift.learning(state, action, new_state, reward)
+        # TODO give replayed to agent to look left and right
 
         # 5) If the agent reached a reward, send it back to the starting position
         # TODO implement the agent backtracking. Potentially replay while doing so
+        if done:
+            state = env.reset()
+            T_Swift.reset()
+        else:
+            state = new_state
     ####################################################################################################################
