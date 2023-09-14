@@ -1,0 +1,116 @@
+Filename, Object Description
+pop0, Population( name = hippocampus )
+pop1, Population( name = hippocampus_activity )
+pop2, Population( name = reward_prediction_error )
+pop3, Population( name = nacc_shell_d1 )
+pop4, Population( name = nacc_shell_d2 )
+pop5, Population( name = stn_ventral )
+pop6, Population( name = vp_direct )
+pop7, Population( name = vp_indirect )
+pop8, Population( name = ventral_tegmental_area )
+pop9, Population( name = pptn_ventral )
+pop10, Population( name = cortical_feedback_ventral )
+pop11, Population( name = thalamus_ventral )
+pop12, Population( name = medial_pfc )
+pop13, Population( name = nacc_core )
+pop14, Population( name = substantia_nigra_pars_reticulata )
+pop15, Population( name = visual_input )
+pop16, Population( name = striatum_d1_dorsomedial )
+pop17, Population( name = striatum_d2_dorsomedial )
+pop18, Population( name = stn_dorsomedial )
+pop19, Population( name = gpi_dorsomedial )
+pop20, Population( name = gpe_dorsomedial )
+pop21, Population( name = substantia_nigra_pars_compacta )
+pop22, Population( name = pptn_dorsomedial )
+pop23, Population( name = cortical_feedback_dorsomedial )
+pop24, Population( name = thalamus_dorsomedial )
+pop25, Population( name = dorsolateral_pfc )
+pop26, Population( name = striatum_d1_dorsolateral )
+pop27, Population( name = gpi_dorsolateral )
+pop28, Population( name = thalamus_dorsolateral )
+pop29, Population( name = premotor )
+proj0, Projection( pre = hippocampus, post = nacc_shell_d1, target = exc, name = proj0 ) using connector: Specific 
+proj1, Projection( pre = nacc_shell_d1, post = nacc_shell_d1, target = inh, name = proj1 ) using connector: Specific 
+proj2, Projection( pre = nacc_shell_d1, post = vp_direct, target = inh, name = proj2 ) using connector: Specific 
+proj3, Projection( pre = vp_direct, post = vp_direct, target = exc, name = proj3 ) using connector: Specific 
+proj4, Projection( pre = vp_direct, post = vp_direct, target = exc, name = proj4 ) using connector: Specific 
+proj5, Projection( pre = vp_direct, post = vp_direct, target = exc, name = proj5 ) using connector: Specific 
+proj6, Projection( pre = vp_direct, post = vp_direct, target = exc, name = proj6 ) using connector: Specific 
+proj7, Projection( pre = vp_direct, post = thalamus_ventral, target = inh, name = proj7 ) using connector: Specific 
+proj8, Projection( pre = thalamus_ventral, post = thalamus_ventral, target = inh, name = proj8 ) using connector: Specific 
+proj9, Projection( pre = hippocampus, post = nacc_shell_d2, target = exc, name = proj9 ) using connector: Specific 
+proj10, Projection( pre = nacc_shell_d2, post = nacc_shell_d2, target = inh, name = proj10 ) using connector: Specific 
+proj11, Projection( pre = nacc_shell_d2, post = vp_indirect, target = inh, name = proj11 ) using connector: Specific 
+proj12, Projection( pre = vp_indirect, post = vp_direct, target = inh, name = proj12 ) using connector: Specific 
+proj13, Projection( pre = medial_pfc, post = stn_ventral, target = exc, name = proj13 ) using connector: Specific 
+proj14, Projection( pre = stn_ventral, post = stn_ventral, target = inh, name = proj14 ) using connector: Specific 
+proj15, Projection( pre = stn_ventral, post = vp_direct, target = exc, name = proj15 ) using connector: Specific 
+proj16, Projection( pre = hippocampus, post = hippocampus_activity, target = exc, name = proj16 ) using connector: Specific 
+proj17, Projection( pre = hippocampus_activity, post = reward_prediction_error, target = exc, name = proj17 ) using connector: Specific 
+proj18, Projection( pre = reward_prediction_error, post = reward_prediction_error, target = inh, name = proj18 ) using connector: Specific 
+proj19, Projection( pre = reward_prediction_error, post = ventral_tegmental_area, target = inh, name = proj19 ) using connector: Specific 
+proj20, Projection( pre = ventral_tegmental_area, post = reward_prediction_error, target = dopa, name = proj20 ) using connector: Specific 
+proj21, Projection( pre = pptn_ventral, post = ventral_tegmental_area, target = exc, name = proj21 ) using connector: Specific 
+proj22, Projection( pre = ventral_tegmental_area, post = nacc_shell_d1, target = dopa, name = proj22 ) using connector: Specific 
+proj23, Projection( pre = ventral_tegmental_area, post = nacc_shell_d2, target = dopa, name = proj23 ) using connector: Specific 
+proj24, Projection( pre = ventral_tegmental_area, post = stn_ventral, target = dopa, name = proj24 ) using connector: Specific 
+proj25, Projection( pre = ventral_tegmental_area, post = vp_direct, target = dopa, name = proj25 ) using connector: Specific 
+proj26, Projection( pre = ventral_tegmental_area, post = vp_indirect, target = dopa, name = proj26 ) using connector: Specific 
+proj27, Projection( pre = cortical_feedback_ventral, post = cortical_feedback_ventral, target = inh, name = proj27 ) using connector: Specific 
+proj28, Projection( pre = cortical_feedback_ventral, post = vp_direct, target = inh, name = proj28 ) using connector: Specific 
+proj29, Projection( pre = cortical_feedback_ventral, post = vp_direct, target = inh, name = proj29 ) using connector: Specific 
+proj30, Projection( pre = thalamus_ventral, post = medial_pfc, target = exc, name = proj30 ) using connector: Specific 
+proj31, Projection( pre = medial_pfc, post = medial_pfc, target = inh, name = proj31 ) using connector: Specific 
+proj32, Projection( pre = medial_pfc, post = cortical_feedback_ventral, target = exc, name = proj32 ) using connector: Specific 
+proj33, Projection( pre = medial_pfc, post = nacc_core, target = exc, name = proj33 ) using connector: Specific 
+proj34, Projection( pre = nacc_core, post = substantia_nigra_pars_reticulata, target = inh, name = proj34 ) using connector: Specific 
+proj35, Projection( pre = substantia_nigra_pars_reticulata, post = thalamus_ventral, target = inh, name = proj35 ) using connector: Specific 
+proj36, Projection( pre = medial_pfc, post = striatum_d1_dorsomedial, target = exc, name = proj36 ) using connector: Specific 
+proj37, Projection( pre = striatum_d1_dorsomedial, post = striatum_d1_dorsomedial, target = inh, name = proj37 ) using connector: Specific 
+proj38, Projection( pre = striatum_d1_dorsomedial, post = gpi_dorsomedial, target = inh, name = proj38 ) using connector: Specific 
+proj39, Projection( pre = gpi_dorsomedial, post = gpi_dorsomedial, target = exc, name = proj39 ) using connector: Specific 
+proj40, Projection( pre = gpi_dorsomedial, post = gpi_dorsomedial, target = exc, name = proj40 ) using connector: Specific 
+proj41, Projection( pre = gpi_dorsomedial, post = gpi_dorsomedial, target = exc, name = proj41 ) using connector: Specific 
+proj42, Projection( pre = gpi_dorsomedial, post = gpi_dorsomedial, target = exc, name = proj42 ) using connector: Specific 
+proj43, Projection( pre = gpi_dorsomedial, post = thalamus_dorsomedial, target = inh, name = proj43 ) using connector: Specific 
+proj44, Projection( pre = thalamus_dorsomedial, post = thalamus_dorsomedial, target = inh, name = proj44 ) using connector: Specific 
+proj45, Projection( pre = thalamus_dorsomedial, post = thalamus_dorsomedial, target = inh, name = proj45 ) using connector: Specific 
+proj46, Projection( pre = thalamus_dorsomedial, post = thalamus_dorsomedial, target = inh, name = proj46 ) using connector: Specific 
+proj47, Projection( pre = thalamus_dorsomedial, post = thalamus_dorsomedial, target = inh, name = proj47 ) using connector: Specific 
+proj48, Projection( pre = thalamus_dorsomedial, post = dorsolateral_pfc, target = exc, name = proj48 ) using connector: Specific 
+proj49, Projection( pre = medial_pfc, post = striatum_d2_dorsomedial, target = exc, name = proj49 ) using connector: Specific 
+proj50, Projection( pre = striatum_d2_dorsomedial, post = striatum_d2_dorsomedial, target = inh, name = proj50 ) using connector: Specific 
+proj51, Projection( pre = striatum_d2_dorsomedial, post = gpe_dorsomedial, target = inh, name = proj51 ) using connector: Specific 
+proj52, Projection( pre = gpe_dorsomedial, post = gpi_dorsomedial, target = inh, name = proj52 ) using connector: Specific 
+proj53, Projection( pre = visual_input, post = stn_dorsomedial, target = exc, name = proj53 ) using connector: Specific 
+proj54, Projection( pre = visual_input, post = stn_dorsomedial, target = exc, name = proj54 ) using connector: Specific 
+proj55, Projection( pre = visual_input, post = stn_dorsomedial, target = exc, name = proj55 ) using connector: Specific 
+proj56, Projection( pre = stn_dorsomedial, post = gpi_dorsomedial, target = exc, name = proj56 ) using connector: Specific 
+proj57, Projection( pre = stn_dorsomedial, post = gpi_dorsomedial, target = exc, name = proj57 ) using connector: Specific 
+proj58, Projection( pre = stn_dorsomedial, post = gpi_dorsomedial, target = exc, name = proj58 ) using connector: Specific 
+proj59, Projection( pre = pptn_dorsomedial, post = substantia_nigra_pars_compacta, target = exc, name = proj59 ) using connector: Specific 
+proj60, Projection( pre = pptn_dorsomedial, post = medial_pfc, target = exc, name = proj60 ) using connector: Specific 
+proj61, Projection( pre = striatum_d1_dorsomedial, post = substantia_nigra_pars_compacta, target = inh, name = proj61 ) using connector: Specific 
+proj62, Projection( pre = substantia_nigra_pars_compacta, post = striatum_d1_dorsomedial, target = dopa, name = proj62 ) using connector: Specific 
+proj63, Projection( pre = substantia_nigra_pars_compacta, post = striatum_d2_dorsomedial, target = dopa, name = proj63 ) using connector: Specific 
+proj64, Projection( pre = substantia_nigra_pars_compacta, post = stn_dorsomedial, target = dopa, name = proj64 ) using connector: Specific 
+proj65, Projection( pre = substantia_nigra_pars_compacta, post = gpi_dorsomedial, target = dopa, name = proj65 ) using connector: Specific 
+proj66, Projection( pre = substantia_nigra_pars_compacta, post = gpe_dorsomedial, target = dopa, name = proj66 ) using connector: Specific 
+proj67, Projection( pre = dorsolateral_pfc, post = cortical_feedback_dorsomedial, target = exc, name = proj67 ) using connector: Specific 
+proj68, Projection( pre = dorsolateral_pfc, post = dorsolateral_pfc, target = inh, name = proj68 ) using connector: Specific 
+proj69, Projection( pre = dorsolateral_pfc, post = dorsolateral_pfc, target = inh, name = proj69 ) using connector: Specific 
+proj70, Projection( pre = dorsolateral_pfc, post = dorsolateral_pfc, target = inh, name = proj70 ) using connector: Specific 
+proj71, Projection( pre = dorsolateral_pfc, post = dorsolateral_pfc, target = inh, name = proj71 ) using connector: Specific 
+proj72, Projection( pre = cortical_feedback_dorsomedial, post = cortical_feedback_dorsomedial, target = inh, name = proj72 ) using connector: Specific 
+proj73, Projection( pre = cortical_feedback_dorsomedial, post = gpi_dorsomedial, target = inh, name = proj73 ) using connector: Specific 
+proj74, Projection( pre = cortical_feedback_dorsomedial, post = gpe_dorsomedial, target = inh, name = proj74 ) using connector: Specific 
+proj75, Projection( pre = dorsolateral_pfc, post = striatum_d1_dorsolateral, target = exc, name = proj75 ) using connector: Specific 
+proj76, Projection( pre = striatum_d1_dorsolateral, post = gpi_dorsolateral, target = inh, name = proj76 ) using connector: Specific 
+proj77, Projection( pre = striatum_d1_dorsolateral, post = gpi_dorsolateral, target = inh, name = proj77 ) using connector: Specific 
+proj78, Projection( pre = striatum_d1_dorsolateral, post = gpi_dorsolateral, target = inh, name = proj78 ) using connector: Specific 
+proj79, Projection( pre = striatum_d1_dorsolateral, post = gpi_dorsolateral, target = inh, name = proj79 ) using connector: Specific 
+proj80, Projection( pre = striatum_d1_dorsolateral, post = gpi_dorsolateral, target = inh, name = proj80 ) using connector: Specific 
+proj81, Projection( pre = striatum_d1_dorsolateral, post = gpi_dorsolateral, target = inh, name = proj81 ) using connector: Specific 
+proj82, Projection( pre = gpi_dorsolateral, post = thalamus_dorsolateral, target = inh, name = proj82 ) using connector: Specific 
+proj83, Projection( pre = thalamus_dorsolateral, post = premotor, target = exc, name = proj83 ) using connector: Specific 
+proj84, Projection( pre = premotor, post = premotor, target = inh, name = proj84 ) using connector: Specific 

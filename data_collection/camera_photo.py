@@ -5,6 +5,7 @@ from cv_bridge import CvBridge, CvBridgeError       # to convert ros image messa
 import rospy                                        # ROS Python Interface
 from sensor_msgs.msg import Image
 import time
+import numpy as np
 
 # Global Parameters
 RATE = 5 # images per second
@@ -23,7 +24,7 @@ class CamPhoto(object):
     """
 
     def __init__(self, default = "both"):
-        rospy.init_node("cam_subscriber")
+        # rospy.init_node("cam_subscriber")
         # cv bridge is used for converting ros img data to data that can be used by open cv
         self.bridge = CvBridge()
         topic_base_name = "/" + os.getenv("MIRO_ROBOT_NAME")
@@ -94,5 +95,10 @@ class CamPhoto(object):
             counter += 1
             print(counter)
 
-camera = CamPhoto()
-camera.save_data()
+    def read_data(self):
+        camera_left = np.array(self.cam_data['left'])
+        camera_right = np.array(self.cam_data['right'])
+        return camera_left, camera_right
+
+#camera = CamPhoto()
+#camera.save_data()
