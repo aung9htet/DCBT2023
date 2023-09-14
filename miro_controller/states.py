@@ -635,9 +635,9 @@ testing.reset_world()
 # testing.movement('straight')
 # testing.movement('straight')
 # testing.movement('straight')
-while not rospy.is_shutdown():
-    testing.get_camera("right")
-    print(np.array(testing.camera_data["left"]).shape)
+# while not rospy.is_shutdown():
+#     testing.get_camera("right")
+#     print(np.array(testing.camera_data["left"]).shape)
     
 # To Test
 # 1: Wall Check
