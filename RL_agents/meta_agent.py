@@ -9,11 +9,12 @@ class metaAgent():
     """
 
     def __init__(self, MF_params: dict, MB_params: dict) -> None:
+        self._replay_thresh = MB_params['replay_thresh']
+        self._actions = {MB_params['actions'][idx]: int(idx) for idx in range(len(MB_params['actions']))}
+        self._states = np.array([[MB_params['curr_state']]])
+        MB_params['curr_state'] = self.__decode_state__(MB_params['curr_state'])
         self._MF = SECagent(**MF_params)
         self._MB = MBagent(**MB_params)
-        self._replay_thresh = MB_params['replay_thresh']
-        self._actions = {'forward': int(0), 'left': int(1), 'right': int(2)}
-        self._states = {MB_params['curr_state']: int(0)}
         return
 
     # Private methods
@@ -27,8 +28,19 @@ class metaAgent():
 
         """
         if state not in self._states:
-            self._states[state] = len(self._states)
+            self._states = np.append(self._states, np.array([[state]]), axis=0)
         return
+
+    def __decode_state__(self, state: np.ndarray) -> int:
+        """
+        Decodes the sate into integers for the MB agent
+        Args:
+            state:
+
+        Returns:
+
+        """
+        return np.where((self._states == np.array([state])).all(axis=1))[0][0]
 
     # Public methods
     def action_selection(self, state: np.ndarray, poss_moves: np.ndarray) -> Tuple[str, bool]:
@@ -47,7 +59,8 @@ class metaAgent():
         action_MF, Q_MF = self._MF.choose_action(state)
 
         # 2) MB action selection
-        action_MB, Q_MB = self._MB.choose_action(self._states[state],
+        decoded_state = self.__decode_state__(state)
+        action_MB, Q_MB = self._MB.choose_action(decoded_state,
                                                  np.array([self._actions[move] for move in poss_moves]))
 
         # 3) Compare results
@@ -79,8 +92,10 @@ class metaAgent():
         self._MF.update_LTM(reward)
 
         # 2) Teach the MB agents
-        self._MB.model_tuning(self._states[state], self._actions[action], self._states[new_state], reward)
-        delta_C = self._MB.learnQvalues(self._states[state], self._actions[action], self._states[new_state], reward)
+        decoded_state = self.__decode_state__(state)
+        decoded_new_state = self.__decode_state__(new_state)
+        self._MB.model_tuning(decoded_state, self._actions[action], decoded_new_state, reward)
+        delta_C = self._MB.learnQvalues(decoded_state, self._actions[action], decoded_new_state, reward)
         replayed = False
         if self._replay_thresh is not None and delta_C > self._replay_thresh:
             self._MB.memory_replay()
@@ -95,3 +110,28 @@ class metaAgent():
         Reset the short-term memory of the MF agent
         """
         self._MF.reset_memory()
+
+    def toggle_save(self):
+        """
+        Toggles saving for future visualization
+        Args:
+
+        Returns:
+
+        """
+        self._MB.toggle_save()
+        return
+
+    def dump_agent(self, **kwargs):
+        """
+        Saving the MB agent
+        Args:
+            **kwargs:
+                path: Path to save. If undefined we save to the working folder
+                tag: the tag to add to the file [optional str]
+        Returns:
+
+        """
+        self._MB.dump_agent(path=kwargs.get('path', None), label=kwargs.get('label', None))
+        return
+
