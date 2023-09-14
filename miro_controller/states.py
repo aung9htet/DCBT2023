@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import cv2
+import time
 import rospy
 import parameters
 import numpy as np
@@ -237,10 +238,11 @@ class State_Representation:
         """
         rospy.init_node(node_name)
         self.action_dict = {}
-        self.position_dict = {'x': 0, 'y': 0, 'yaw': 0}
+        self.position_dict = {'x': None, 'y': None, 'yaw': None}
         self.map_representation = Map_Representation()
         self.bridge = CvBridge()
         self.camera_data = {'left': None, 'right': None}
+        self.sonar = None
 
         # ROS data processing
         topic_base_name = "/" + os.getenv("MIRO_ROBOT_NAME")
@@ -258,9 +260,34 @@ class State_Representation:
         self.vel_sub = rospy.Subscriber(
             topic_base_name + "/sensors/odom", Odometry, self.callback_vel
         )
-        rospy.sleep(parameters.SLEEP_TIMER)
+        self.sonar_sub = rospy.Subscriber(
+            topic_base_name + "/sensors/sonar", Odometry, self.callback_sonar
+        )
+        # rospy.sleep(parameters.SLEEP_TIMER)
         self.rate = rospy.Rate(parameters.REFRESH_RATE)
 
+        # check for connection
+        check_connection = False
+        while check_connection == False:
+            check_connection = True
+            for key in self.position_dict:
+                if self.position_dict[key] is None:
+                    check_connection = False
+            for key in self.camera_data:
+                if self.camera_data[key] is None:
+                    check_connection = False
+            if self.sonar is None:
+                check_connection = False
+
+    def callback_sonar(self, data):
+        """
+            callback_sonar function is used to update the sonar range data to
+            self.sonar
+
+            :param data: rostopic message data received from subscriber
+        """
+        self.sonar = data.range
+        
     def callback_vel(self, data):
         """
             callback_vel function is first used to translate the subscriber data into 
@@ -338,10 +365,34 @@ class Action_State_RL(State_Representation):
         self.action_dict['right'] = self.right
         self.action_dict['straight'] = self.straight
 
-    def right(self):
+    def check_wall(self, default=True):
+        """
+            return True when the wall is in front
+            return False when the wall is not in front
+
+            :param default: True checks wall nearer and false checks wall further
+                            This parameter is used to decide whether the robot gets
+                            nearer to the wall to check or just stay at the spot and
+                            check for wall
+        """
+        if default == True:
+            if self.sonar < parameters.WALL_RANGE:
+                return True
+            else:
+                return False
+        else:
+            if self.sonar < parameters.WALL_RANGE:
+                return True
+            else:
+                return False
+        
+    def right(self, default=True):
         """
             right function moves the miro 90 degrees to the right then move straight
             for 1 meter
+
+            :param default: True will not move the agent from moving straight after
+            turning
         """
         vel_cmd = TwistStamped()
         vel_cmd.twist.angular.z = -parameters.TURN_SPEED
@@ -351,12 +402,16 @@ class Action_State_RL(State_Representation):
             print(self.position_dict["yaw"])
             self.vel_pub.publish(vel_cmd)
             self.rate.sleep()
-        self.straight()
+        if not default:
+            self.straight()
 
-    def left(self):
+    def left(self, default = False):
         """
             left function moves the miro 90 degrees to the left then move straight
             for 1 meter
+
+            :param default: True will not move the agent from moving straight after
+            turning
         """
         vel_cmd = TwistStamped()
         vel_cmd.twist.angular.z = parameters.TURN_SPEED
@@ -366,24 +421,61 @@ class Action_State_RL(State_Representation):
             print(self.position_dict["yaw"])
             self.vel_pub.publish(vel_cmd)
             self.rate.sleep()
-        self.straight()
+        if not default:
+            self.straight()
     
-    def straight(self):
+    def straight(self, readjust=False):
         """
             straight function moves the miro straight 0.05m
             for 1 meter
+            
+            :param readjust: To have the miro move backwards if it finds a wall
+                             This function can be used as a backup in case the agent doesnt find a wall in front
         """
         vel_cmd = TwistStamped()
         vel_cmd.twist.linear.x = parameters.STRAIGHT_DISTANCE
         start_x = self.position_dict["x"]
         start_y = self.position_dict["y"]
         rospy.sleep(parameters.SLEEP_TIMER)
-        while (np.abs(self.position_dict["x"] - start_x) < parameters.STRAIGHT_DISTANCE) and (np.abs(self.position_dict["y"] - start_y) < parameters.STRAIGHT_DISTANCE):
+        start_time = time.time()
+        while (np.abs(self.position_dict["x"] - start_x) < parameters.STRAIGHT_DISTANCE) and (np.abs(self.position_dict["y"] - start_y) < parameters.STRAIGHT_DISTANCE) and self.check_wall == False:
             print("x: " + str(self.position_dict["x"]) + " ,y: " + str(self.position_dict["y"]))
             print((np.abs(self.position_dict["x"] - start_x) < parameters.STRAIGHT_DISTANCE) or (np.abs(self.position_dict["y"] - start_y) < parameters.STRAIGHT_DISTANCE))
             self.vel_pub.publish(vel_cmd)
             self.rate.sleep()
+            timer = time.time() - start_time # used for calculate how long agent needs to go back
+        
+        # readjust part of the code
+        if readjust == True:
+            start_time = time.time()
+            # move the agent back
+            if self.check_wall() == True:
+                print("Err: Wall is in front! Moving back")
+                vel_cmd.twist.linear.x = -parameters.STRAIGHT_DISTANCE
+                # Move back for the same amount of time moved front
+                while time.time() - start_time < timer:
+                    self.vel_pub.publish(vel_cmd)
+                    self.rate.sleep()
 
+    def get_possible_action(self, reformat=False):
+        """
+            get_possible_action function gives you a list of action that you may
+            be able to choose for moving the agent
+
+            :param reformat: True if you need to check what actions you can do
+                             False if you need to get all actions from the list
+        """
+        possible_actions = {}
+        possible_actions['left'] = self.action_dict['left']
+        possible_actions['right'] = self.action_dict['right']
+        # decide whether to add straight or not based on whether
+        # the format wants it to check for wall or not
+        if reformat is False:
+            possible_actions['straight'] = self.action_dict['straight']
+        else:
+            if self.check_wall(default=False) == False:
+                possible_actions['straight'] = self.action_dict['straight']
+        return possible_actions
 
 # makes the miro move in circles
 testing = Action_State_RL("action_pub")
