@@ -6,7 +6,7 @@
 # title: "Goal selection in a hierarchical model of the multiple basal ganglia loops"
 
 from ANNarchy import *
-from states import *
+from miro_controller.states import *
 import random
 
 ######################################################################################################

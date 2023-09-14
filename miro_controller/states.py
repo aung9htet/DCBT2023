@@ -3,7 +3,7 @@ import os
 import cv2
 import time
 import rospy
-import parameters
+import miro_controller.parameters as parameters
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 from tf.transformations import euler_from_quaternion
@@ -626,8 +626,8 @@ class Action_State_RL(State_Representation):
             return False
     
 # makes the miro move in circles
-testing = Action_State_RL("action_pub")
-testing.reset_world()
+#testing = Action_State_RL("action_pub")
+#testing.reset_world()
 # testing.map_representation.show_map()
 # print(testing.map_representation.agent_pos)
 # testing.movement('straight')
