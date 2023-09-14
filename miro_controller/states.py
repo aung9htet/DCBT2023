@@ -12,7 +12,7 @@ from tf.transformations import euler_from_quaternion
 from nav_msgs.msg import Odometry 
 from sensor_msgs.msg import Image, Range, JointState
 from geometry_msgs.msg import TwistStamped
-from std_msgs.msg import UInt32MultiArray
+from std_msgs.msg import UInt32MultiArray, Float32MultiArray
 
 # ROS services import
 from std_srvs.srv import Empty
@@ -259,6 +259,7 @@ class State_Representation:
         self.camera_data = {'left': None, 'right': None}
         self.sonar = None
         self.number_of_steps = 0
+        self.light_calculation = None
 
         # ROS data processing
         topic_base_name = "/" + os.getenv("MIRO_ROBOT_NAME")
@@ -285,6 +286,10 @@ class State_Representation:
         self.illum_pub = rospy.Publisher(
             topic_base_name + "/control/illum", UInt32MultiArray, queue_size=0
         )
+        self.light_sub = rospy.Subscriber(
+            topic_base_name + "/sensors/light", Float32MultiArray, self.callback_light
+        )
+
         # rospy.sleep(parameters.SLEEP_TIMER)
         self.rate = rospy.Rate(parameters.REFRESH_RATE)
 
@@ -300,11 +305,28 @@ class State_Representation:
                     check_connection = False
             if self.sonar is None:
                 check_connection = False
+            if self.light_calculation is None:
+                check_connection = False
+            print("Err: Trying connection again!")
 
         # ROS service processing
         rospy.wait_for_service('/gazebo/reset_world')
         # the following method can be used for resetting the world
         self.reset_world = rospy.ServiceProxy('/gazebo/reset_world', Empty)
+
+    def callback_light(self, data):
+        """
+            callback_light function is used to update the light value data with the
+            calculation of the average light sensor value from all 4 sensors
+
+            :param data: rostopic data received from subscriber
+        """
+        data_len = len(data.data)
+        light_val = 0
+        for sensor_data in data.data:
+            light_val += sensor_data
+        light_val /= data_len
+        self.light_calculation = light_val
 
     def callback_sonar(self, data):
         """
@@ -394,13 +416,6 @@ class State_Representation:
             the agent
         """
         return self.number_of_steps
-    
-    def reset_environment(self):
-        """
-            TODO: reset_environment method will reset both the embodied agent and the positional
-            matrix representation of itself
-        """
-        return False
     
     def get_current_agent_node(self):
         """
@@ -601,11 +616,14 @@ class Action_State_RL(State_Representation):
 
     def get_reward(self):
         """
-            TODO: get_reward method is supposed to give the user with the reward
+            get_reward method is supposed to give the user with the reward
             values related to this state space based on its vision based
             deduction
         """
-        return False
+        if self.light_calculation > parameters.LIGHT_THRESHOLD:
+            return True
+        else:
+            return False
     
 # makes the miro move in circles
 #testing = Action_State_RL("action_pub")
@@ -617,9 +635,9 @@ class Action_State_RL(State_Representation):
 # testing.movement('straight')
 # testing.movement('straight')
 # testing.movement('straight')
-# while not rospy.is_shutdown():
-    # testing.get_camera("right")
-    # print(np.array(testing.camera_data["left"]).shape)
+while not rospy.is_shutdown():
+    testing.get_camera("right")
+    print(np.array(testing.camera_data["left"]).shape)
     
 # To Test
 # 1: Wall Check

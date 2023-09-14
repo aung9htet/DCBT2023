@@ -10,24 +10,6 @@
       <background>0.7 0.7 0.7 1</background>
       <shadows>1</shadows>
     </scene>
-    <light name='sun' type='directional'>
-      <cast_shadows>1</cast_shadows>
-      <pose>0 0 10 0 -0 0</pose>
-      <diffuse>0.8 0.8 0.8 1</diffuse>
-      <specular>0.1 0.1 0.1 1</specular>
-      <attenuation>
-        <range>1000</range>
-        <constant>0.9</constant>
-        <linear>0.01</linear>
-        <quadratic>0.001</quadratic>
-      </attenuation>
-      <direction>-0.5 0.5 -1</direction>
-      <spot>
-        <inner_angle>0</inner_angle>
-        <outer_angle>0</outer_angle>
-        <falloff>0</falloff>
-      </spot>
-    </light>
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
     <atmosphere type='adiabatic'/>
@@ -40,7 +22,7 @@
     </spherical_coordinates>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>0.940424 0.118316 13.1296 -0 1.34579 -3.08698</pose>
+        <pose>3.78709 -0.137902 26.9553 -0 1.34579 -3.08698</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -19328,64 +19310,6 @@
       </link>
       <static>1</static>
     </model>
-    <model name='miro_toy_ball_clone'>
-      <link name='link'>
-        <inertial>
-          <mass>0.000419</mass>
-          <inertia>
-            <ixx>2.79e-06</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.79e-06</iyy>
-            <iyz>0</iyz>
-            <izz>2.79e-06</izz>
-          </inertia>
-          <pose>0 0 0 0 -0 0</pose>
-        </inertial>
-        <collision name='collision'>
-          <geometry>
-            <sphere>
-              <radius>0.1</radius>
-            </sphere>
-          </geometry>
-          <surface>
-            <bounce/>
-            <friction>
-              <ode/>
-              <torsional>
-                <ode/>
-              </torsional>
-            </friction>
-            <contact>
-              <ode/>
-            </contact>
-          </surface>
-          <max_contacts>10</max_contacts>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <sphere>
-              <radius>0.1</radius>
-            </sphere>
-          </geometry>
-          <material>
-            <script>
-              <name>Gazebo/Blue</name>
-              <uri>__default__</uri>
-            </script>
-          </material>
-        </visual>
-        <velocity_decay>
-          <linear>0</linear>
-          <angular>0</angular>
-        </velocity_decay>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-        <gravity>1</gravity>
-        <enable_wind>0</enable_wind>
-      </link>
-      <pose>-2.57613 -2.39053 0.105 0.098859 -3e-06 0</pose>
-    </model>
     <model name='miro_football_pitch_clone_0_clone'>
       <static>1</static>
       <link name='main'>
@@ -20074,10 +19998,10 @@
       <pose>0.024954 0.017754 0 3.14115 -0 0</pose>
     </model>
     <state world_name='default'>
-      <sim_time>168 391000000</sim_time>
-      <real_time>50 150573504</real_time>
-      <wall_time>1694618840 223574605</wall_time>
-      <iterations>49207</iterations>
+      <sim_time>27 30000000</sim_time>
+      <real_time>27 221271211</real_time>
+      <wall_time>1694703102 559335060</wall_time>
+      <iterations>27030</iterations>
       <model name='T-maze'>
         <pose>0.753519 -0.085995 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -20455,79 +20379,79 @@
         </link>
       </model>
       <model name='miro'>
-        <pose>-0.018721 0.210438 0.005278 -0.000475 -0.108234 -0.064517</pose>
+        <pose>-0.015303 0.196769 0.005285 -0.000414 -0.10824 -0.078245</pose>
         <scale>1 1 1</scale>
         <link name='miro_body::body'>
-          <pose>-0.018721 0.210438 0.005278 -0.000475 -0.108234 -0.064517</pose>
-          <velocity>-6.6e-05 -0.00224 1.1e-05 -0.059968 0.003792 0.000537</velocity>
-          <acceleration>0.063513 0.571619 0.007808 0.00771 1.26159 -2.50798</acceleration>
-          <wrench>0.099766 0.8979 0.012264 0 -0 0</wrench>
+          <pose>-0.015303 0.196769 0.005285 -0.000414 -0.10824 -0.078245</pose>
+          <velocity>0.000223 0.002248 -2.9e-05 0.059834 -0.004443 -0.001276</velocity>
+          <acceleration>-0.065427 -0.578449 -0.022474 2.92032 -0.607079 -0.625075</acceleration>
+          <wrench>-0.102772 -0.908627 -0.035303 0 -0 0</wrench>
         </link>
         <link name='miro_body::wheel_lh'>
-          <pose>-0.020381 0.210534 0.005166 -0.000694 -0.069281 -0.063504</pose>
-          <velocity>0.000122 -3.1e-05 -0.002707 -0.02747 0.001773 0.000565</velocity>
-          <acceleration>0.133883 2.38122 -9.69849 1.47809 1.38606 1.77303</acceleration>
-          <wrench>0.017946 0.319181 -1.3 0 -0 0</wrench>
+          <pose>-0.015891 0.196804 0.005247 -0.000614 -0.094449 -0.077872</pose>
+          <velocity>-9e-05 5.3e-05 0.002676 0.027631 0.000268 -0.001247</velocity>
+          <acceleration>-0.162433 -2.38782 9.65114 1.53039 -1.45848 1.35858</acceleration>
+          <wrench>-0.021773 -0.320066 1.29365 0 -0 0</wrench>
         </link>
         <link name='miro_body::wheel_rh'>
-          <pose>-0.020415 0.21056 0.005167 -0.000219 -0.068439 -0.06559</pose>
-          <velocity>-2.2e-05 -4.8e-05 0.00277 -0.027147 0.003049 0.000264</velocity>
-          <acceleration>0.198066 2.30674 9.7923 -1.03369 -0.828984 -1.85855</acceleration>
-          <wrench>0.026549 0.309197 1.31257 0 -0 0</wrench>
+          <pose>-0.016199 0.196849 0.00522 -0.00023 -0.087153 -0.078818</pose>
+          <velocity>5.9e-05 6.3e-05 -0.002796 0.027182 -0.001125 -0.001062</velocity>
+          <acceleration>-0.221051 -2.31007 -9.8178 0.942501 1.34321 1.84829</acceleration>
+          <wrench>-0.02963 -0.309644 -1.31599 0 -0 0</wrench>
         </link>
         <link name='miro_gmbl::gmbl'>
-          <pose>-0.064554 0.213406 0.012603 -0.000512 0.473948 -0.064805</pose>
-          <velocity>0.000202 0.000843 -7e-06 -0.020548 0.000912 0.006244</velocity>
-          <acceleration>0.672579 8.92656 0.018943 1.82478 -0.375352 1.58542</acceleration>
-          <wrench>0.026412 0.350546 0.000744 0 -0 0</wrench>
+          <pose>-0.061097 0.200363 0.012612 -0.000488 0.47401 -0.078521</pose>
+          <velocity>-5.8e-05 -0.000799 -2.6e-05 0.01998 -0.001078 -0.007895</velocity>
+          <acceleration>-0.780787 -8.90548 -0.061048 -2.10427 -0.514005 1.19918</acceleration>
+          <wrench>-0.030662 -0.349718 -0.002397 0 -0 0</wrench>
         </link>
         <link name='miro_head::ear_lh'>
-          <pose>-0.047323 0.233956 0.004877 0.043214 0.395613 -0.201074</pose>
-          <velocity>0.001774 0.013588 0.000885 0.042587 -0.003695 -0.029546</velocity>
-          <acceleration>2.7533 -0.499751 4.08243 -2.78664 -0.266639 -1.6166</acceleration>
-          <wrench>0.155697 -0.02826 0.230857 0 -0 0</wrench>
+          <pose>-0.043795 0.220446 0.004955 0.042614 0.396467 -0.213251</pose>
+          <velocity>-0.001734 -0.013482 -0.000922 -0.042827 0.004428 0.027559</velocity>
+          <acceleration>-2.6871 0.62962 -4.17326 2.0261 1.06247 -0.334104</acceleration>
+          <wrench>-0.151953 0.035604 -0.235993 0 -0 0</wrench>
         </link>
         <link name='miro_head::ear_rh'>
-          <pose>-0.050572 0.191451 0.005083 -0.042701 0.397822 0.067538</pose>
-          <velocity>0.000522 0.013556 -0.000933 0.041996 -0.003739 -0.029396</velocity>
-          <acceleration>-2.77603 -0.039869 -3.96942 2.36978 -0.448765 -1.58948</acceleration>
-          <wrench>-0.156981 -0.002255 -0.224467 0 -0 0</wrench>
+          <pose>-0.047418 0.178208 0.005091 -0.042734 0.397891 0.05382</pose>
+          <velocity>-0.000586 -0.013488 0.000909 -0.042287 0.00456 0.027646</velocity>
+          <acceleration>2.65199 0.109603 3.9576 -3.12008 1.26295 -0.417627</acceleration>
+          <wrench>0.149967 0.006198 0.223798 0 -0 0</wrench>
         </link>
         <link name='miro_head::eyelid_lh'>
-          <pose>-8.3e-05 0.275984 -0.016441 0.287738 0.19637 0.015454</pose>
-          <velocity>0.002403 0.012432 0.002968 0.039901 -0.000802 -0.029612</velocity>
-          <acceleration>2.02418 1.11587 2.82407 -1.83635 -0.874309 -1.97757</acceleration>
-          <wrench>0.033915 0.018696 0.047317 0 -0 0</wrench>
+          <pose>0.004223 0.262039 -0.016439 0.287701 0.196428 0.001756</pose>
+          <velocity>-0.002306 -0.012428 -0.003033 -0.040202 0.001586 0.027833</velocity>
+          <acceleration>-1.99867 -1.14535 -2.87869 1.03402 1.55867 0.023618</acceleration>
+          <wrench>-0.033488 -0.01919 -0.048232 0 -0 0</wrench>
         </link>
         <link name='miro_head::eyelid_rh'>
-          <pose>0.017761 0.110056 -0.017694 -0.406562 0.069169 -0.153519</pose>
-          <velocity>-0.001213 0.011876 -0.0041 0.039565 -0.006111 -0.029461</velocity>
-          <acceleration>-1.70432 1.38016 -2.64994 -2.49588 1.07486 -1.67487</acceleration>
-          <wrench>-0.028556 0.023125 -0.0444 0 -0 0</wrench>
+          <pose>0.019793 0.095883 -0.017687 -0.406606 0.069226 -0.167213</pose>
+          <velocity>0.001009 -0.011944 0.004086 -0.039767 0.006943 0.02768</velocity>
+          <acceleration>1.60137 -1.45112 2.64814 1.89897 -0.287421 -0.282185</acceleration>
+          <wrench>0.026831 -0.024313 0.04437 0 -0 0</wrench>
         </link>
         <link name='miro_head::head'>
-          <pose>-0.063748 0.21336 0.0122 -0.000476 0.469457 -0.064804</pose>
-          <velocity>0.001118 0.013615 -4.9e-05 0.041546 -0.003571 -0.029318</velocity>
-          <acceleration>0.41579 5.04465 0.039161 1.45796 -0.135479 -1.38981</acceleration>
-          <wrench>0.108853 1.32068 0.010252 0 -0 0</wrench>
+          <pose>-0.060292 0.200294 0.012208 -0.000522 0.469514 -0.078517</pose>
+          <velocity>-0.001154 -0.013512 2.6e-05 -0.041838 0.004443 0.027547</velocity>
+          <acceleration>-0.493824 -5.02168 -0.084502 -2.24079 0.94445 -0.549469</acceleration>
+          <wrench>-0.129283 -1.31467 -0.022122 0 -0 0</wrench>
         </link>
         <link name='miro_neck::neck'>
-          <pose>-0.064551 0.213404 0.012603 -0.000514 0.473938 -0.064788</pose>
-          <velocity>-0.000117 -0.00339 3e-06 -0.02953 0.001546 0.029511</velocity>
-          <acceleration>0.303019 4.3609 0.029849 -2.32901 0.567291 -0.862591</acceleration>
-          <wrench>0.022847 0.328803 0.002251 0 -0 0</wrench>
+          <pose>-0.061094 0.200365 0.012612 -0.00048 0.474003 -0.078523</pose>
+          <velocity>0.000383 0.003421 -6.5e-05 0.029419 -0.002465 -0.030201</velocity>
+          <acceleration>-0.358788 -4.36009 -0.057316 0.285236 -1.18563 1.14137</acceleration>
+          <wrench>-0.027052 -0.328742 -0.004322 0 -0 0</wrench>
         </link>
         <link name='miro_tail::tail'>
-          <pose>-0.019112 0.209789 0.004523 1.2e-05 -0.103235 -0.069247</pose>
-          <velocity>-8.3e-05 -0.002339 2.7e-05 -0.059455 0.003915 4.6e-05</velocity>
-          <acceleration>0.24712 3.4859 -0.008985 0.469987 1.54609 0.789238</acceleration>
-          <wrench>0.013974 0.197124 -0.000508 0 -0 0</wrench>
+          <pose>-0.015678 0.196429 0.004529 -0.000148 -0.103241 -0.080831</pose>
+          <velocity>0.000266 0.002346 2.8e-05 0.059292 -0.004909 -0.000784</velocity>
+          <acceleration>-0.279752 -3.48623 0.023987 2.41891 0.117579 2.33963</acceleration>
+          <wrench>-0.01582 -0.197143 0.001356 0 -0 0</wrench>
         </link>
         <link name='miro_tail::tail_gmbl'>
-          <pose>-0.019067 0.21046 0.004523 -0.000475 -0.103234 -0.06452</pose>
-          <velocity>-8.5e-05 -0.002361 -1.3e-05 -0.0597 0.00393 3.7e-05</velocity>
-          <acceleration>0.246655 3.47942 -0.008939 3.12238 1.56388 -2.36893</acceleration>
-          <wrench>0.013948 0.196758 -0.000505 0 -0 0</wrench>
+          <pose>-0.015649 0.196796 0.004529 -0.000414 -0.10324 -0.078247</pose>
+          <velocity>0.000267 0.002367 5e-05 0.059537 -0.004928 -0.000777</velocity>
+          <acceleration>-0.279005 -3.47974 0.024041 2.90923 0.156037 2.35539</acceleration>
+          <wrench>-0.015777 -0.196776 0.001359 0 -0 0</wrench>
         </link>
       </model>
       <model name='miro_football_pitch_clone'>
@@ -20780,18 +20704,8 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='miro_toy_ball_clone'>
-        <pose>-2.57613 -2.38474 0.104987 0.040981 -3e-06 0</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose>-2.57613 -2.38474 0.104987 0.040981 -3e-06 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0 0.002604 -1e-06 -0.02604 0 0</acceleration>
-          <wrench>-0 1e-06 -0 0 -0 0</wrench>
-        </link>
-      </model>
-      <light name='sun'>
-        <pose>0 0 10 0 -0 0</pose>
+      <light name='user_spot_light_0'>
+        <pose>-2.63357 -2.35953 1 0 -0 0</pose>
       </light>
     </state>
     <model name='miro'>
@@ -22144,5 +22058,23 @@
       <plugin name='miro_model' filename='libmiro_gazebo.so'/>
       <pose>-0.012536 0.19628 0.005371 -0.000415 -0.108237 -0.072804</pose>
     </model>
+    <light name='user_spot_light_0' type='spot'>
+      <pose>-2.63357 -2.35953 1 0 -0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <direction>0 0 -1</direction>
+      <attenuation>
+        <range>20</range>
+        <constant>0.5</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <cast_shadows>0</cast_shadows>
+      <spot>
+        <inner_angle>0.6</inner_angle>
+        <outer_angle>1</outer_angle>
+        <falloff>1</falloff>
+      </spot>
+    </light>
   </world>
 </sdf>

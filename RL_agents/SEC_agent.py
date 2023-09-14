@@ -4,7 +4,7 @@ import numpy as np
     Class implementing the Sequential Episodic Control (SEC) algorithm
 '''
 
-cclass SECagent(object):
+class SECagent(object):
     def __init__(self, action_space=4,
         pl=2, stm=50, ltm=500,
         sequential_bias=True, sequential_value=0.01,
@@ -109,14 +109,14 @@ cclass SECagent(object):
         # For Atari games: Chose CL action after a minimum number of exploration steps have been taken
         action, q = self.action_selection(state)
         if self.steps < self.exploration_steps:
-            action = np.random.choice(a=env.n_actions)
+            action = np.random.choice(a=self.action_space)
         return action, q
 
     def epsilon_step(self, state):
         # For Atari games: Follow an epsilon-greedy policy
         action, q = self.action_selection(state)
         if (np.random.random() < self.epsilon):
-            action = np.random.choice(a=env.n_actions)
+            action = np.random.choice(a=self.action_space)
         return action, q
 
     def action_selection(self, state):
@@ -132,7 +132,7 @@ cclass SECagent(object):
             # RL STANDARD: ARGMAX
             self.action = np.argmax(q)
 
-        q_action = q[action]
+        q_action = q[self.action]
 
         if isinstance(self.action_space, list):
             self.action = [int(self.action/self.action_space[1]), self.action % self.action_space[1]]
